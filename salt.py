@@ -1,5 +1,5 @@
 import os
-from _types import BinaryFileManager
+from .protocols import BinaryFileManager
 
 
 class Salt:
