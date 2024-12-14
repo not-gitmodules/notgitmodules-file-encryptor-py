@@ -4,8 +4,8 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 import base64
 import os
 from typing import Union, List, Set, Tuple
-from salt import Salt
-from ._types import BinaryFileManager
+from .salt import Salt
+from .protocols import BinaryFileManager
 
 FilesToEncodeType = Union[List[str], Set[str], Tuple[str]]
 
