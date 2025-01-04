@@ -19,20 +19,23 @@ class FileEncryptor:
         use_salt: bool = False,
         save_salt: bool = True,
         salt_file_name='salt',
+        delete_original_file: bool = False
     ):
         """
         :param binary_file_manager: the file manager class for binary files
         :param save_salt: Save salt to a file?
         :param salt_file_name: according to how the salt file is named in your project
-        :param use_salt:
+        :param delete_original_file: delete the original file after encryption/decryption. Recommended to set to False in development and True in production.
+        :param use_salt: use salt for encryption?
         - files_to_encode: raw filenames, do not include .enc
         - true: it adds salt that will be saved in a file
         - false: it doesn't add salt, and encrypts using the master key given
 
 
         """
-        self.files_to_encode = files_to_encode
-        self.binary_file_manager = binary_file_manager
+        self.files_to_encode: FilesToEncodeType = files_to_encode
+        self.binary_file_manager: BinaryFileManager = binary_file_manager
+        self.delete_original_file: bool = delete_original_file
 
         _master_key = bytes(input("Enter the key: "), 'utf-8')
 
@@ -63,7 +66,9 @@ class FileEncryptor:
                 file_data: bytes = self.binary_file_manager.read(file_name)
                 encrypted_data: bytes = self._fernet.encrypt(file_data)
                 self.binary_file_manager.write(file_path=f"{file_name}.enc", content=encrypted_data)
-                self.binary_file_manager.delete(file_name)
+                # delete the original file
+                if self.delete_original_file:
+                    self.binary_file_manager.delete(file_name)
 
     def decrypt(self):
         for file_name in self.files_to_encode:
@@ -76,6 +81,8 @@ class FileEncryptor:
                     raise ValueError("Key does not match or the file has been tampered with.")
                 else:
                     self.binary_file_manager.write(file_path=file_name, content=data)
-                    self.binary_file_manager.delete(file_name_enc)
+                    # delete the original encrypted file
+                    if self.delete_original_file:
+                        self.binary_file_manager.delete(file_name_enc)
             else:
-                raise FileNotFoundError(os.path.abspath(file_name_enc), 'wasnt found')
+                raise FileNotFoundError(os.path.abspath(file_name_enc), 'was not found')

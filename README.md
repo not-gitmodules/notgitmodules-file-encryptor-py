@@ -95,7 +95,8 @@ file_encryptor = FileEncryptor(
     ],
     use_salt=True,
     save_salt=True,
-    salt_file_name='playground/salt'
+    salt_file_name='playground/salt',
+    delete_original_file=False
 )
 
 file_encryptor.encrypt() # to encrypt file(s)
