@@ -37,8 +37,8 @@ class FileEncryptor:
         self.binary_file_manager: BinaryFileManager = binary_file_manager
         self.delete_original_file: bool = delete_original_file
 
-
-        _master_key = bytes(enc_key) if enc_key := os.getenv("ENCRYPTION_KEY") else bytes(input("Enter the key: "), 'utf-8')
+        _enc_key = os.getenv("ENCRYPTION_KEY")
+        _master_key = bytes(_enc_key) if _enc_key else bytes(input("Enter the key: "), 'utf-8')
 
         if use_salt:
             salt_obj = Salt(
